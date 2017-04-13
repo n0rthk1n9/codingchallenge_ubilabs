@@ -1,0 +1,116 @@
+<!-- not axactly what you wanted me to do but this was the last working version
+     after one hour -->
+<!doctype html>
+<html>
+  <head>
+    <title>Google Maps</title>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style type="text/css">
+      #map {
+        height: 100%;
+      }
+
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="map"></div>
+    <script type="text/javascript">
+
+      function initMap() {
+        // center coodrinates for map
+        var coordinatesUbilabs = { lat: 53.561261, lng: 9.9589803 };
+
+        // new map with centerpoint set to coodrinates of Ubilabs Hamburg
+        var map = new google.maps.Map(document.getElementById('map'), {
+          center: coordinatesUbilabs,
+          zoom: 8
+        });
+
+        // function to get random values in a specified range
+        function getRandomInRange(from, to, fixed) {
+          return (Math.random() * (to - from) + from).toFixed(fixed) * 1;
+        }
+
+        // array for storing all markers
+        var markers = new Array()
+
+        // generate 200 markers with random coodrinates
+        for (var i = 0; i <= 200; i++) {
+          var randomCoordinate = { lat: getRandomInRange(47, 54, 6), lng: getRandomInRange(5, 15, 6) };
+          var marker = new google.maps.Marker({
+            position: randomCoordinate,
+            map: map,
+            title: "Random Marker " + i
+          });
+          markers[i] = marker;
+        }
+
+        // to be honest i did not figure out this mathematical function by
+        // myself i just found it on stackoverflow but it does nearly what i want
+        // to achieve. It finds the closest marker from a given latitude and longitude
+        // out of the markers array
+        function findClosestMarker(lat1, lon1) {
+            var pi = Math.PI;
+            var R = 6371;
+            var distances = [];
+            var closest = -1;
+
+            for( i=0;i<markers.length; i++ ) {
+                var lat2 = markers[i].position.lat();
+                var lon2 = markers[i].position.lng();
+
+                var chLat = lat2-lat1;
+                var chLon = lon2-lon1;
+
+                var dLat = chLat*(pi/180);
+                var dLon = chLon*(pi/180);
+
+                var rLat1 = lat1*(pi/180);
+                var rLat2 = lat2*(pi/180);
+
+                var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                            Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(rLat1) * Math.cos(rLat2);
+                var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                var d = R * c;
+
+                distances[i] = d;
+                if ( closest == -1 || d < distances[closest] ) {
+                    closest = i;
+                }
+            }
+
+            // set a bounce animation on the closest marker
+            markers[closest].setAnimation(google.maps.Animation.BOUNCE)
+
+            // deactivate the animation after 3 seconds
+            setTimeout(function() {
+              markers[closest].setAnimation(null)
+            }, 3000);
+
+        }
+
+        // get the position of the click on the map and call the findClosestMarker
+        // function with latitude and longitude of clicked position
+        var clickedPosition = google.maps.event.addListener(map, 'click', function(event) {
+          var lat = event.latLng.lat();
+          var lng = event.latLng.lng();
+
+          findClosestMarker(lat, lng);
+        });
+
+      }
+    </script>
+    <!-- did not want to submit my maps API key because of privacy reasons, I hope you
+         understand that ;) -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY_GOES_HERE&callback=initMap" async defer></script>
+  </body>
+</html>

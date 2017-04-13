@@ -1,0 +1,55 @@
+<!-- nearest solution i was able to achieve in 30 minutes, i know that it is
+     possible to use animation and transition in CSS3 but not exactly how
+     to solve the given problem with this -->
+<!doctype html>
+<html>
+  <head>
+    <title>Animated Circle</title>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style type="text/css">
+      @keyframes animateCircle {
+          0%   { transform: rotate(360deg);  }
+          100% { transform: rotate(0deg);    }
+      }
+
+      body{
+          padding: 20px;
+      }
+
+      .wrapper {
+          width: 300px;
+          margin-top: 100px;
+          margin-left: -15px;
+          animation: animateCircle 10s linear;
+      }
+
+      .inner {
+          border-radius: 50%;
+          border-color: black;
+          display: inline-block;
+          padding: 30px;
+          background: yellow;
+      }
+
+      .circle {
+        width: 270px;
+        height: 270px;
+        border-radius: 50%;
+        border-color: black;
+        border-style: solid;
+        border-width: 5px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="circle">
+      <div class="wrapper">
+        <div class="inner"></div>
+      </div>
+    </div>
+  </body>
+</html>
